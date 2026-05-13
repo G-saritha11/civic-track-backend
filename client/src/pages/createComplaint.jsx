@@ -1,0 +1,160 @@
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import "./createComplaint.css";
+import { createComplaint } from "../api";
+
+function CreateComplaint() {
+  const [form, setForm] = useState({
+    title: "",
+    location: "",
+    description: "",
+    date: "",
+    image: null,
+  });
+
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "image" ? files[0] : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+    setMessage("");
+
+    const formData = new FormData();
+
+    formData.append("title", form.title);
+    formData.append("location", form.location);
+    formData.append("description", form.description);
+    formData.append("date", form.date);
+    formData.append("status", "Pending");
+    formData.append("image", form.image);
+console.log("Form Data:", {formData})
+    try {
+      const response = await createComplaint(formData);
+
+      setMessage(
+        response.message ||
+          "Complaint submitted successfully ✅"
+      );
+
+      setForm({
+        title: "",
+        location: "",
+        description: "",
+        date: "",
+        image: null,
+      });
+    } catch (error) {
+      console.log(error);
+      setMessage("Something went wrong ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="create-container">
+
+      {/* SIDEBAR */}
+      <div className="sidebar">
+        <h2>CivicTrack</h2>
+
+        <ul>
+          <li>
+            <Link to="/dashboard">Dashboard</Link>
+          </li>
+
+          <li>
+            <Link to="/createComplaint">Create Complaint</Link>
+          </li>
+
+          <li>
+            <Link to="/">My Complaints</Link>
+          </li>
+
+          <li>
+            <button>
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      {/* FORM SECTION */}
+      <div className="form-section">
+
+        <form
+          onSubmit={handleSubmit}
+          className="complaint-form"
+        >
+
+          <h1>Create Complaint</h1>
+
+          <input
+            type="text"
+            name="title"
+            placeholder="Complaint Title"
+            value={form.title}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+            required
+          />
+
+          <textarea
+            name="description"
+            placeholder="Describe the issue in detail..."
+            value={form.description}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="file"
+            name="image"
+            onChange={handleChange}
+            required
+          />
+
+          <button type="submit" disabled={loading}>
+            {loading
+              ? "Submitting..."
+              : "Submit Complaint"}
+          </button>
+
+          {message && (
+            <p className="message">{message}</p>
+          )}
+
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default CreateComplaint;

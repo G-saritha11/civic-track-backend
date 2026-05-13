@@ -1,20 +1,52 @@
 const express = require("express");
 const router = express.Router();
+const bodyParser = require("body-parser");
+const uploads = require("../multerConfig");
+router.use(bodyParser.json());
 
 const Issue = require("../models/Issue");
 
 /* CREATE ISSUE */
-router.post("/", async(req, res) => {
 
-    const issue = new Issue(req.body);
 
-    await issue.save();
 
-    res.json(issue);
-});
+
+// Create complaint
+router.post(
+    "/createComplaint",
+    uploads.single("image"),
+    async(req, res) => {
+        try {
+            const { title, description, location } =
+            req.body;
+
+            const issue = new Issue({
+                title,
+                description,
+                location,
+                image: req.file ?
+                    req.file.filename : "",
+            });
+
+            await issue.save();
+
+            res.status(201).json({
+                success: true,
+                message: "Complaint created",
+                issue,
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                message: error.message,
+            });
+        }
+    }
+);
+
 
 /* GET ALL ISSUES */
-router.get("/", async(req, res) => {
+router.get("/allComplaints", async(req, res) => {
 
     const issues = await Issue.find();
 
@@ -22,7 +54,7 @@ router.get("/", async(req, res) => {
 });
 
 /* UPDATE ISSUE STATUS */
-router.put("/:id", async(req, res) => {
+router.put("/updateStatus/:id", async(req, res) => {
 
     const updated = await Issue.findByIdAndUpdate(
         req.params.id,

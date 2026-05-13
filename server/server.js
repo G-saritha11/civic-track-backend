@@ -9,11 +9,13 @@ app.use(cors());
 app.use(express.json());
 
 /* ROUTES */
-//const userRoutes = require("./routes/userRoutes");
-//const issueRoutes = require("./routes/issueRoutes");
+const userRoutes = require("./routes/userRoutes");
+const issueRoutes = require("./routes/issueRoutes");
+app.use("/api", userRoutes);
+app.use("/api", issueRoutes);
 
-//app.use("/api/users", userRoutes);
-//app.use("/api/issues", issueRoutes);
+app.use("/uploads", express.static("uploads"));
+
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("MongoDB Connected"))
