@@ -3,9 +3,7 @@ const express = require("express");
 console.log("USER ROUTES FILE RUNNING");
 
 const router = express.Router();
-
 const User = require("../models/user");
-
 const jwt = require("jsonwebtoken");
 
 // GET ALL USERS
@@ -22,15 +20,12 @@ router.get("/", async (req, res) => {
 // REGISTER
 router.post("/register", async (req, res) => {
   try {
-
     console.log(req.body);
 
     const user = new User(req.body);
-
     await user.save();
 
     res.json(user);
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Registration Failed" });
@@ -40,13 +35,9 @@ router.post("/register", async (req, res) => {
 // LOGIN
 router.post("/login", async (req, res) => {
   try {
-
     const { email, password } = req.body;
 
-    const user = await User.findOne({
-      email,
-      password,
-    });
+    const user = await User.findOne({ email, password });
 
     if (!user) {
       return res.status(400).json({
@@ -58,7 +49,7 @@ router.post("/login", async (req, res) => {
       { id: user._id },
       "mysecretkey"
     );
-    
+
     console.log("TOKEN CREATED:", token);
 
     res.json({
@@ -66,7 +57,6 @@ router.post("/login", async (req, res) => {
       token,
       user,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Login Failed" });

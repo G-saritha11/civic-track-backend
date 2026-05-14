@@ -17,11 +17,6 @@ app.get("/test", (req, res) => {
   res.send("Backend route working");
 });
 
-app.get("/api/users", async (req, res) => {
-  const users = await mongoose.model("User").find();
-  res.json(users);
-});
-
 app.use("/api/users", userRoutes);
 app.use("/api/issues", issueRoutes);
 

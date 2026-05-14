@@ -11,10 +11,16 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+<<<<<<< HEAD
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.2"
+=======
+    "mongoose": "^9.6.2",
+    "multer": "^2.1.1"
+>>>>>>> eb38ae2333d5496072710f31505590f8a47579f9
   }
 }
