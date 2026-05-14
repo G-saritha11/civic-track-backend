@@ -1,35 +1,49 @@
 const express = require("express");
 const router = express.Router();
 
-const Issue = require("../models/Issue");
+const Issue = require("../models/issue");
 
-/* CREATE ISSUE */
-router.post("/", async(req, res) => {
+const authMiddleware = require("../middleware/authMiddleware");
 
-    const issue = new Issue(req.body);
-
-    await issue.save();
-
-    res.json(issue);
+// GET ALL ISSUES
+router.get("/", async (req, res) => {
+  const issues = await Issue.find();
+  res.json(issues);
 });
 
-/* GET ALL ISSUES */
-router.get("/", async(req, res) => {
+// MY COMPLAINTS
+router.get("/my-complaints", authMiddleware, async (req, res) => {
 
-    const issues = await Issue.find();
+  const issues = await Issue.find({
+    userId: req.user.id,
+  });
 
-    res.json(issues);
+  res.json(issues);
 });
 
-/* UPDATE ISSUE STATUS */
-router.put("/:id", async(req, res) => {
+// CREATE ISSUE
+router.post("/", authMiddleware, async (req, res) => {
 
-    const updated = await Issue.findByIdAndUpdate(
-        req.params.id,
-        req.body, { new: true }
-    );
+  const newIssue = new Issue({
+    ...req.body,
+    userId: req.user.id,
+  });
 
-    res.json(updated);
+  await newIssue.save();
+
+  res.json(newIssue);
+});
+
+// UPDATE STATUS
+router.put("/:id", async (req, res) => {
+
+  const updatedIssue = await Issue.findByIdAndUpdate(
+    req.params.id,
+    { status: req.body.status },
+    { new: true }
+  );
+
+  res.json(updatedIssue);
 });
 
 module.exports = router;

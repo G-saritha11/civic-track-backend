@@ -10,7 +10,9 @@ const issueSchema = new mongoose.Schema({
         default: "Pending"
     },
 
-    username: String
+    username: String,
+
+     userId: String, 
 });
 
 module.exports = mongoose.model("Issue", issueSchema);
