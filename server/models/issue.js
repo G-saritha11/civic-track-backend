@@ -6,10 +6,22 @@ const issueSchema = new mongoose.Schema({
     description: String,
     location: String,
 
+    location: String,
+
+    image: {
+    type: String,
+    default: "",
+    },
+
     status: {
         type: String,
         default: "Pending"
     },
+
+    feedback: {
+  type: String,
+  default: "",
+},
 
     username: String,
 

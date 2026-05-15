@@ -4,6 +4,7 @@ const router = express.Router();
 const Issue = require("../models/issue");
 
 const authMiddleware = require("../middleware/authMiddleware");
+const upload = require("../multerConfig");
 
 // GET ALL ISSUES
 router.get("/", async (req, res) => {
@@ -22,28 +23,60 @@ router.get("/my-complaints", authMiddleware, async (req, res) => {
 });
 
 // CREATE ISSUE
-router.post("/", authMiddleware, async (req, res) => {
+router.post(
+  "/",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
+   const newIssue = new Issue({
+  title: req.body.title,
+  description: req.body.description,
+  location: req.body.location,
+  category: req.body.category,
 
-  const newIssue = new Issue({
-    ...req.body,
-    userId: req.user.id,
-  });
+  image: req.file
+    ? req.file.filename
+    : "",
 
-  await newIssue.save();
+  username: req.body.username,
 
-  res.json(newIssue);
+  userId: req.user.id,
 });
+    await newIssue.save();
 
-// UPDATE STATUS
+    res.json(newIssue);
+  }
+);
+
+// UPDATE STATUS + FEEDBACK
 router.put("/:id", async (req, res) => {
-
   const updatedIssue = await Issue.findByIdAndUpdate(
     req.params.id,
-    { status: req.body.status },
+    {
+      status: req.body.status,
+      feedback: req.body.feedback,
+    },
     { new: true }
   );
 
   res.json(updatedIssue);
+});
+
+// DELETE COMPLAINT
+router.delete("/:id", async (req, res) => {
+  try {
+    await Issue.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Complaint Deleted",
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Delete Failed",
+    });
+  }
 });
 
 module.exports = router;
