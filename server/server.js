@@ -7,6 +7,7 @@ require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
 const issueRoutes = require("./routes/issueRoutes");
+const supportRoutes = require("./routes/supportRoutes");
 
 const app = express();
 
@@ -20,7 +21,7 @@ app.get("/test", (req, res) => {
 
 app.use("/api/users", userRoutes);
 app.use("/api/issues", issueRoutes);
-
+app.use("/api/support", supportRoutes);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
