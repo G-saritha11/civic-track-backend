@@ -62,6 +62,47 @@ router.put("/:id", async (req, res) => {
   res.json(updatedIssue);
 });
 
+// FEEDBACK IMAGE UPLOAD
+router.put(
+  "/feedback/:id",
+  authMiddleware,
+  upload.single("image"),
+  async (req, res) => {
+
+    try {
+
+      const complaint =
+        await Issue.findById(req.params.id);
+
+      if (!complaint) {
+        return res.status(404).json({
+          message: "Complaint not found",
+        });
+      }
+
+      complaint.feedbackImage =
+        req.file.filename;
+
+      await complaint.save();
+
+      res.json({
+        message: "Feedback uploaded successfully",
+        data: complaint,
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      res.status(500).json({
+        message: "Server Error",
+      });
+
+    }
+
+  }
+);
+
 // DELETE COMPLAINT
 router.delete("/:id", async (req, res) => {
   try {
