@@ -6,8 +6,6 @@ const issueSchema = new mongoose.Schema({
     description: String,
     location: String,
 
-    location: String,
-
     image: {
     type: String,
     default: "",
@@ -18,6 +16,15 @@ const issueSchema = new mongoose.Schema({
         default: "Pending"
     },
 
+    isEscalated: {
+  type: Boolean,
+  default: false,
+},
+
+escalatedAt: {
+  type: Date,
+},
+
     feedback: {
   type: String,
   default: "",
@@ -26,6 +33,6 @@ const issueSchema = new mongoose.Schema({
     username: String,
 
      userId: String, 
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Issue", issueSchema);
