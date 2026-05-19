@@ -57,13 +57,13 @@ router.post(
                     });
             }
             if (
-               role === "Council" &&
-               councilCode !== "COUNCIL2026"
-                ) {
-                return res.status(401).json({
-               message: "Invalid Council Code ❌",
-                });
-               }
+  role?.trim() === "Council" &&
+  councilCode?.trim() !== "COUNCIL2026"
+) {
+  return res.status(401).json({
+    message: "Invalid Council Code ❌",
+  });
+}
 
             // CREATE USER
             const user =
@@ -82,7 +82,7 @@ router.post(
                         id: user._id,
                         role: user.role,
                     },
-                    "SECRET_KEY", {
+                    "mysecretkey" , {
                         expiresIn: "7d",
                     }
                 );
